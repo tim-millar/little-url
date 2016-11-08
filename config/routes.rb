@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  get 'new/:long_url' => 'url#new'
+  get 'new/*long_url', to: 'url#new', :constraints => { :long_url => /.*/ }
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
