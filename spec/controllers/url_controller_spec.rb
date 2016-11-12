@@ -3,8 +3,8 @@ require 'rails_helper'
 describe UrlController do
   describe 'GET new' do
     let(:long_url) { 'https://google.com' }
-    let(:short_url) { 'http://localhost:3000/345' }
-    let(:url) { double('Url', id: 345) }
+    let(:short_url) { 'http://test.host/345' }
+    let(:link_builder) { double('LinkBuilder', as_json: urls) }
     let(:urls) {
       {
         original_url: long_url,
@@ -13,7 +13,8 @@ describe UrlController do
     }
 
     before do
-      allow(Url).to receive(:create).with(long_url: long_url).and_return(url)
+      allow(LinkBuilder).to receive(:new).with(controller.request).
+        and_return(link_builder)
     end
 
     context 'when passed a URL' do
@@ -24,11 +25,11 @@ describe UrlController do
     end
 
     context 'when passed an invalid URL' do
-      let(:error) { { error: "Invalid url" } }
+      let(:urls) { { error: 'Invalid url' } }
 
       it 'returns JSON containing an error' do
         get :new, long_url: 'not a url'
-        expect(response.body).to eql(error.to_json)
+        expect(response.body).to eql(urls.to_json)
       end
     end
   end
