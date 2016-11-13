@@ -10,7 +10,6 @@ describe RedirectController do
       allow(Url).to receive(:find).with(short_url).and_return(url)
     end
 
-
     it "redirects to the short_url's long_url" do
       get :index, short_url: short_url
       expect(response).to redirect_to(long_url)

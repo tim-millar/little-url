@@ -1,8 +1,11 @@
-class LinkBuilder
-  attr_reader :request
+require 'request_info'
 
-  def initialize(request)
-    @request = request
+class LinkBuilder
+  attr_reader :request_info
+  private :request_info
+
+  def initialize(request_info)
+    @request_info = request_info
   end
 
   def as_json(options={})
@@ -16,7 +19,7 @@ class LinkBuilder
   private
 
   def valid_url?
-    long_url =~ valid_url
+    request_info.valid_long_url?
   end
 
   def links
@@ -31,23 +34,11 @@ class LinkBuilder
   end
 
   def long_url
-    request.original_fullpath[5..-1]
-  end
-
-  def valid_url
-    /\A#{URI::regexp(['http', 'https'])}\z/
+    request_info.long_url
   end
 
   def short_url
-    base_url + '/' + url_id
-  end
-
-  def base_url
-    request.base_url
-  end
-
-  def url_id
-    url.id.to_s
+    request_info.base_url + "/#{url.id}"
   end
 
   def url
